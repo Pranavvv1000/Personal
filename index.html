@@ -1,0 +1,113 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+</head>
+<body>
+    
+    <div class="wrapper">
+        <div id='tContainer' class="typing-demo"></div>
+      </div>
+    
+      <div class="div1">
+        <a href="https://www.youtube.com/@Firescriptx"><button class="btn" id="btn1">YouTube</button></a>
+       
+        <a href="https://www.linkedin.com/in/pranav-solase-61948421b"><button class="btn" id="btn3">LinkedIn</button></a>
+        <a href="https://github.com/Pranavvv1000"><button class="btn" id="btn4">GitHub</button></a>
+        <a href="https://www.instagram.com/pranvxz/"><button class="btn" id="btn2">Instagram</button></a>
+      </div>
+     
+</body>
+
+<script>
+    "use strict";
+class CharacterEmitter {
+    constructor(inputString) {
+        this.inputString = inputString;
+        this.currentIndex = 0;
+        this.removeCharacterSection = "{r}";
+        this.currentValue = "";
+    }
+    subscribe(callback, timeout) {
+        this.interval = setInterval(() => {
+            // If we are at the end of the string, unsubscribe and return
+            if (this.currentIndex === this.inputString.length) {
+                this.unsubscribe();
+                return;
+            }
+            const indexOfFirstRemoveCharacter = this.inputString.indexOf(this.removeCharacterSection, this.currentIndex - 1);
+            // If we are at the start of the remove character section, remove one character and update current index
+            if (this.inputString[this.currentIndex] ===
+                this.removeCharacterSection[0] &&
+                indexOfFirstRemoveCharacter === this.currentIndex) {
+                this.currentIndex += this.removeCharacterSection.length - 1;
+                this.currentValue = this.currentValue.slice(0, -1);
+            }
+            else {
+                this.currentValue =
+                    this.currentValue + this.inputString[this.currentIndex];
+            }
+            this.currentIndex++;
+            callback(this.currentValue);
+        }, timeout);
+    }
+    unsubscribe() {
+        clearInterval(this.interval);
+        this.interval = undefined;
+    }
+}
+
+class Random {
+    static getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    /**
+     * Returns a random boolean value
+     * @param n 1 in n chance of returning true
+     */
+    static getRandomBoolean(n) {
+        return Math.floor(Math.random() * n) === 0;
+    }
+}
+
+const container = document.getElementById("tContainer");
+const text = "Hello, I'm Pranav A Web Developer";
+
+const stringWithImperfections = addSpellingMistakes(text);
+const characterEmitter = new CharacterEmitter(stringWithImperfections);
+characterEmitter.subscribe((value) => (container.innerText = value), 150);
+function addSpellingMistakes(text) {
+    return text
+        .split("")
+        .map((value) => {
+        return Random.getRandomBoolean(5)
+            ? `${getCloseCharacter(value)}{r}${value}`
+            : value;
+    })
+        .join("");
+}
+function getCloseCharacter(char) {
+    const keyboardLayout = [
+        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "\\"],
+        ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
+    ];
+    const row = keyboardLayout.find((row) => row.includes(char.toLowerCase()));
+    if (!row) {
+        return char; // Return the original character if it's not found on the keyboard
+    }
+    const col = row.indexOf(char.toLowerCase());
+    const adjacents = [row[col - 1], row[col + 1]].filter(Boolean); // Remove undefined values
+    const closeChar = adjacents.length
+        ? adjacents[Math.floor(Math.random() * adjacents.length)]
+        : char;
+    return char.toUpperCase() === char ? closeChar.toUpperCase() : closeChar;
+}
+
+</script>
+</html>
